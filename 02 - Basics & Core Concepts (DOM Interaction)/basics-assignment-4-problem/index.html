@@ -19,18 +19,22 @@
     <section id="assignment">
       <!-- 1) Fetch the user input and use it as a CSS class -->
       <!-- The entered class should be added to the below paragraph -->
-      <input type="text" />
+      <!-- <input type="text" @input="writeClass"/> -->
+      <input type="text" v-model="inputClass"/>
       <!-- (available classes: "user1", "user2") -->
-      <p>
+      <!-- <p :class="inputClass"> -->
+      <!-- <p :class="{user1: inputClass === 'user1', user2: inputClass === 'user2'}"> -->
+      <p :class="getMyClass">
         Style me!
       </p>
-      <button>Toggle Paragraph</button>
+      <button @click="toggleParagraph">Toggle Paragraph</button>
       <!-- 2) Use the "visible" and "hidden" classes to show/ hide the above paragraph -->
       <!-- Clicking the button should toggle between the two options -->
 
       <!-- 3) Add dynamic inline styling to the below paragraph and let the user enter a background-color -->
-      <input type="text" />
-      <p>Style me inline!</p>
+      <!-- <input type="text" @input="writeStyle"/> -->
+      <input type="text" v-model="inputStyle"/>
+      <p :style="{backgroundColor: inputStyle}">Style me inline!</p>
     </section>
   </body>
 </html>
