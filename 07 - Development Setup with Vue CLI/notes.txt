@@ -1,0 +1,13 @@
+Commands:
+
+npm install
+npm init vue
+npm run serve
+
+
+
+Terms:
+
+kebap-case
+PascalCase
+camelCase
