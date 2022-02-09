@@ -1,0 +1,12 @@
+Supported Prop Values:
+
+String
+Number
+Boolean
+Array
+Object
+Date
+Function
+Symbol
+
+But type can also be any constructor function (built-in ones like Date or custom ones).
