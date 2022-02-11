@@ -26,9 +26,8 @@
           <input type="radio" id="rating-great" value="great" name="rating" v-model="chosenRating" />
           <label for="rating-great">Great</label>
         </div>
-        <p
-          v-if="invalidInput"
-        >One or more input fields are invalid. Please check your provided data.</p>
+        <p v-if="invalidInput" >One or more input fields are invalid. Please check your provided data.</p>
+        <p v-if="error">{{ error }}</p>
         <div>
           <base-button>Submit</base-button>
         </div>
@@ -38,15 +37,18 @@
 </template>
 
 <script>
+// import axios from 'axios';
+
 export default {
   data() {
     return {
       enteredName: '',
       chosenRating: null,
       invalidInput: false,
+      error: null,
     };
   },
-  emits: ['survey-submit'],
+  // emits: ['survey-submit'],
   methods: {
     submitSurvey() {
       if (this.enteredName === '' || !this.chosenRating) {
@@ -55,9 +57,65 @@ export default {
       }
       this.invalidInput = false;
 
-      this.$emit('survey-submit', {
-        userName: this.enteredName,
-        rating: this.chosenRating,
+      // this.$emit('survey-submit', {
+      //   userName: this.enteredName,
+      //   rating: this.chosenRating,
+      // });
+
+      // method 1:
+
+      // fetch('https://vue-http-demo-1155b-default-rtdb.europe-west1.firebasedatabase.app/surveys.json', {
+      //   method: 'POST',  // GET | POST | DELETE | PATCH
+      //   headers: {
+      //     'Content-Type': 'application/json'
+      //   },
+      //   body: JSON.stringify({
+      //     name: this.enteredName,
+      //     rating: this.chosenRating
+      //   })
+      // })
+
+
+
+      // .then(response => {
+      //   // if(response.ok){
+      //   //   //...
+      //   // } else {
+      //   //   throw new Error('Could not save data!');
+      //   // }
+      //   console.log(response)
+      //   if(response.status === 200 || response.status === 201){
+      //     //...
+      //   } else if(response.status === 400 || response.status === 500){
+      //     throw new Error('Could not save data!');
+      //   }
+      // })
+
+      
+
+      // method 2:
+
+      this.error = null;
+
+      const axios = require('axios');
+
+      axios.post('https://vue-http-demo-1155b-default-rtdb.europe-west1.firebasedatabase.app/surveys.json', {
+        name: this.enteredName,
+        rating: this.chosenRating
+      }).catch((error) => {
+        //console.log(error);
+        if(error.response){
+          console.log("1")
+          throw new Error('Could not save data!');
+        } else if(error.request){
+          console.log("2")
+        } else {
+          console.log("3")
+          throw new Error('Something went wrong - try again later!');
+        }
+        //console.log(error.config);
+      }).catch((error) => {
+        this.error = error.message;
       });
 
       this.enteredName = '';
