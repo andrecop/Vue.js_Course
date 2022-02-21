@@ -1,28 +1,148 @@
 <template>
+
+  <router-view v-slot="slotProps">
+    <transition name="fade-button" mode="out-in">
+      <component :is="slotProps.Component"></component>
+    </transition>
+  </router-view>
+
+  
   <div class="container">
-    <div class="block"></div>
-    <button>Animate</button>
+    <UsersList />
   </div>
-  <base-modal @close="hideDialog" v-if="dialogIsVisible">
-    <p>This is a test dialog!</p>
-    <button @click="hideDialog">Close it!</button>
-  </base-modal>
+
+  <div class="container">
+    <div class="block" :class="{ animate: animatedBlock }"></div>
+    <button @click="animateBlock">Animate</button>
+  </div>
+
+  <div class="container">
+    <!-- <transition>
+      <p v-if="paraIsVisible">This is only sometimes visible...</p>
+    </transition> -->
+    <!-- <transition
+      name="para" -->
+    <transition
+      :css="false"
+      @before-enter="beforeEnter"
+      @enter="enter"
+      @after-enter="afterEnter"
+      @before-leave="beforeLeave"
+      @leave="leave"
+      @after-leave="afterLeave"
+      @enter-cancel="enterCancelled"
+      @leave-cancel="leaveCancelled"
+    >    <!-- enter-to-class="some-class" enter-active-class="..."> -->
+      <p v-if="paraIsVisible">This is only sometimes visible...</p>
+    </transition>
+    <button @click="toggleParagraph">Toggle Paragraph</button>
+  </div>
+
+  <div class="container">
+    <transition name="fade-button" mode="out-in">
+      <button @click="showUsers" v-if="!usersAreVisible">Show Users</button>
+      <button @click="hideUsers" v-else>Hide Users</button>
+    </transition>
+  </div>
+
+  <!-- <transition name="modal"> -->
+    <base-modal @close="hideDialog" :open="dialogIsVisible"><!-- v-if="dialogIsVisible"> -->
+      <p>This is a test dialog!</p>
+      <button @click="hideDialog">Close it!</button>
+    </base-modal>
+  <!-- </transition> -->
+
   <div class="container">
     <button @click="showDialog">Show Dialog</button>
   </div>
-</template>  
+
+</template>
 
 <script>
+import UsersList from './components/UsersList.vue';
+
 export default {
+  components: {
+    UsersList
+  },
   data() {
-    return { dialogIsVisible: false };
+    return {
+      animatedBlock: false,
+      dialogIsVisible: false,
+      paraIsVisible: false,
+      usersAreVisible: false,
+      enterInterval: null,
+      leaveInterval: null,
+    };
   },
   methods: {
+    enterCancelled() {
+      clearInterval(this.enterInterval);
+    },
+    leaveCancelled() {
+      clearInterval(this.leaveInterval);
+    },
+    beforeEnter(el) {
+      console.log('beforeEnter');
+      console.log(el);
+      el.style.opacity = 0;
+    },
+    enter(el, done) {
+      console.log('enter');
+      console.log(el);
+      let round = 1;
+      this.enterInterval = setInterval(() => {
+        el.style.opacity = round * .1;
+        round++;
+        if(round > 100){
+          clearInterval(this.enterInterval);
+          done();
+        }
+      }, 20);
+    },
+    afterEnter(el) {
+      console.log('afterEnter');
+      console.log(el);
+    },
+    beforeLeave(el) {
+      console.log('beforeLeave');
+      console.log(el);
+      el.style.opacity = 1;
+    },
+    leave(el, done) {
+      console.log('leave');
+      console.log(el);
+      let round = 1;
+      this.leaveInterval = setInterval(() => {
+        el.style.opacity = 1 - round * .1;
+        round++;
+        if(round > 100){
+          clearInterval(this.leaveInterval);
+          done();
+        }
+      }, 20);
+    },
+    afterLeave(el) {
+      console.log('afterLeave');
+      console.log(el);
+    },
+    animateBlock() {
+      this.animatedBlock = !this.animatedBlock;
+    },
+    toggleParagraph() {
+      this.paraIsVisible = !this.paraIsVisible;
+    },
     showDialog() {
       this.dialogIsVisible = true;
     },
     hideDialog() {
       this.dialogIsVisible = false;
+    },
+    showUsers() {
+      this.usersAreVisible = true;
+    },
+    hideUsers() {
+      this.usersAreVisible = false;
     },
   },
 };
@@ -57,6 +177,7 @@ button:active {
   height: 8rem;
   background-color: #290033;
   margin-bottom: 2rem;
+  /* transition: transform 0.3s ease-out; */
 }
 .container {
   max-width: 40rem;
@@ -68,5 +189,123 @@ button:active {
   padding: 2rem;
   border: 2px solid #ccc;
   border-radius: 12px;
+}
+.animate {
+  /* transform: translateX(-150px); */
+  animation: slide-scale 0.3s ease-out forwards;
+}
+
+
+
+.v-enter-from {
+  /* opacity: 0;
+  transform: translateY(-30px); */
+}
+.v-enter-active {
+  /* transition: all 0.3s ease-out; */
+  animation: slide-scale 0.3s ease-out;
+}
+.v-enter-to {
+  /* opacity: 1;
+  transform: translateY(0); */
+}
+
+.v-leave-from {
+  /* opacity: 1;
+  transform: translateY(0); */
+}
+.v-leave-active {
+  /* transition: all 0.3s ease-out; */
+  animation: slide-scale 0.3s ease-out;
+}
+.v-leave-to {
+  /* opacity: 0;
+  transform: translateY(-30px); */
+}
+
+
+
+
+
+
+/* .para-enter-active {
+  animation: slide-scale 0.3s ease-out;
+}
+.para-leave-active {
+  animation: slide-scale 0.3s ease-out;
+} */
+
+.fade-button-enter-from,
+.fade-button-leave-to {
+  opacity: 0;
+}
+
+.fade-button-enter-active {
+  transition: opacity 0.3s ease-out;
+}
+
+.fade-button-leave-active {
+  transition: opacity 0.3s ease-in;
+}
+
+.fade-button-enter-to,
+.fade-button-leave-from {
+  opacity: 1;
+}
+
+
+
+
+/* .modal-enter-from {
+}
+.modal-enter-active {
+  animation: modal 0.3s ease-out;
+}
+.modal-enter-to {
+}
+
+.modal-leave-from {
+}
+.modal-leave-active {
+  animation: modal 0.3s ease-out;
+}
+.modal-leave-to {
+}
+
+@keyframes modal {
+  from {
+    opacity: 0;
+    transform: translateY(-50px) scale(0.9);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+} */
+
+.route-enter-from {}
+.route-enter-active {
+  animation: slide-scale 0.4s ease-out;
+}
+.route-enter-to {}
+
+.route-leave-from {}
+.route-leave-active {
+  animation: slide-scale 0.4s ease-in;
+}
+.route-leave-to {}
+
+
+
+@keyframes slide-scale {
+  0% {
+    transform: translateX(0) scale(1);
+  }
+  70% {
+    transform: translateX(-120px) scale(1.1);
+  }
+  100% {
+    transform: translateX(-150px) scale(1);
+  }
 }
 </style>
