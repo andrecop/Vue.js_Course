@@ -22,6 +22,11 @@ export default {
   components: {
     ProductItem,
   },
+  computed: {
+    products() {
+      return this.$store.getters['prods/products'];
+    }
+  },
 };
 </script>
 
