@@ -1,110 +1,48 @@
 <template>
   <section class="container">
-    <h2>{{ user.name }}</h2>
-    <h2>{{ user.age }}</h2>
-    <!-- <h2>{{ userName }}</h2>
-    <h2>{{ age }}</h2> -->
-
-    <!-- <button @click="user.age = 32">Change Age</button> -->
+    <h2>{{ userName }}</h2>
+    <h2>{{ age }}</h2>
     <button @click="setAge">Change Age</button>
-    <!-- {{ setAge() }} -->
+    <div>
+      <input type="text" placeholder="First Name" v-model="firstName">
+      <input type="text" placeholder="Last Name" v-model="lastName">
+    </div>
   </section>
 </template>
 
 <script>
-// import { ref } from 'vue';
-// import { reactive, toRefs } from 'vue';
-import { reactive } from 'vue';
-// import { reactive, isReactive, isRef } from 'vue';
+import { ref, computed, watch } from 'vue';
 
 export default {
-
-  // ------- OPTION 1
-  // setup() {
-  //   const uName = ref('Maximilian');
-  //   const uAge = ref(31);
-
-  //   setTimeout(function() {
-  //     uName.value = 'Max';
-  //     uAge.value = 32;
-  //   }, 2000)
-
-  //   return {
-  //     userName: user.value.name,
-  //     age: user.value.age,
-  //   };
-  // }
-  
-  // ------- OPTION 2
-  // setup() {
-  //   const user = ref({
-  //     name: 'Maximilian',
-  //     age: 31,
-  //   });
-
-  //  console.log(isReactive(user));
-  //  console.log(isRef(user));
-
-  //   setTimeout(function() {
-  //     user.value.name = 'Max';
-  //     user.value.age = 32;
-  //   }, 2000)
-
-  //   return {
-  //     user: user
-  //   };
-  // }
-  
-  // ------- OPTION 3
-  // setup() {
-  //   const user = reactive({
-  //     name: 'Maximilian',
-  //     age: 31,
-  //   });
-
-  //   setTimeout(function() {
-  //     user.name = 'Max';
-  //     user.age = 32;
-  //   }, 2000)
-
-  //   const userRefs = toRefs(user);
-
-  //   return {
-  //     user: user,
-  //     userName: userRefs.name,
-  //     age: userRefs.age,
-  //   };
-  // }
-  
-  // ------- OPTION 3 - clean
   setup() {
-    const user = reactive({
-      name: 'Maximilian',
-      age: 31,
+    const firstName = ref('');
+    const lastName = ref('');
+    const uAge = ref(31);
+
+    const uName = computed(function() {
+      return firstName.value + ' ' + lastName.value;
+    });
+
+    watch([uAge, uName], function(newValues, oldValues) {
+      console.log('Old age: ' + oldValues[0]);
+      console.log('New age: ' + newValues[0]);
+      console.log('Old name: ' + oldValues[1]);
+      console.log('New name: ' + newValues[1]);
     });
 
     function setNewAge() {
-      user.age = 32;
+      uAge.value = 33;
     }
 
     return {
-      user: user,
-      setAge: setNewAge
+      userName: uName,
+      age: uAge,
+      setAge: setNewAge,
+      firstName,
+      lastName,
+
     };
   }
-
-  // ------- OPTION OLD
-  // data() {
-  //   return {
-  //     userName: 'Maximilian',
-  //     age: 31,
-  //   };
-  // },
-  // methods: {
-  //   setNewAge() {
-  //     this.age = 31;
-  //   }
-  // },
 };
 </script>
 
